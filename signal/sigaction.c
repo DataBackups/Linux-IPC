@@ -49,3 +49,19 @@ int main(int argc, char **argv)
 
 	return 0;
 }
+/*
+*命令行参数为信号值，后台运行./a.out signo &,可获得该进程的ID，假设为PID
+*然后再另一个终端上运行kill -s signo pid 进行验证
+*
+*一个终端
+*slzsource/ddu/LinuxIPC/signal# ./a.out  10
+*wait for the signal
+*wait for the signal
+*wait for the signal
+*receive signal 10
+*wait for the signal
+*
+*
+*另一个终端
+*# kill -s 10 13361 
+*/
