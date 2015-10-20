@@ -24,16 +24,14 @@
 
 //int sigqueue(pid_t pid, int sig, const union sigval value);
 
-//union sigval {
-//	int   sival_int;
-//	void *sival_ptr;
-//};
-
 void new_op(int signum, siginfo_t *info, void *myact)
 {
 	int i;
 
 	printf("handle signal %d\n", signum);
+	
+//	printf("catch number %d\n", info->si_int);
+
 	for (i=0; i<10; i++)
 		//printf("%c ", (*((char *)((*info).si_ptr) + i)));
 		printf("%c ", (*((char *)(info->si_ptr + i))));
@@ -54,9 +52,10 @@ int main(int argc, char **argv)
 	pid = getpid();
 
 	value.sival_ptr = data;
-	signum = atoi(argv[1]);//没有对错误进行处理
+//	value.sival_int = 10;
+	signum = atoi(argv[1]);
 	sigemptyset(&act.sa_mask);
-	act.sa_flags = SA_SIGINFO;//SA_SIGINFO 是否传递参数的开关
+	act.sa_flags = SA_SIGINFO;//是否传递信息的开关
 	act.sa_sigaction = new_op;
 
 	ret = sigaction(signum, &act, NULL);
@@ -66,11 +65,12 @@ int main(int argc, char **argv)
 	while (1) {
 		sleep(2);
 		printf("wait for the signal\n");
-		sigqueue(pid, signum, value); //发送信号
+		sigqueue(pid, signum, value);//向本进程发送信号，并传递附加消息。
 	}
 
 	return 0;
 }
+
 /*
 *执行./a.out 35
 *slzsource/ddu/LinuxIPC/signal# ./a.out 35
